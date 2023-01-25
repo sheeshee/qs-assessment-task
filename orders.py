@@ -1,11 +1,15 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
+from db import get_connection
 
 orders_pages = Blueprint('orders', __name__, url_prefix='/orders')
 
 
 @orders_pages.route('/', methods=['GET'])
 def list_orders():
-    pass
+    conn = get_connection()
+    cursor = conn.cursor()
+    orders_list = cursor.execute("SELECT * FROM orders").fetchall()
+    return jsonify(orders_list)
 
 
 @orders_pages.route('/<order_id>', methods=['GET'])
@@ -31,5 +35,3 @@ def post():
 @orders_pages.route('/metrics', methods=['GET'])
 def metrics():
     pass
-
-
