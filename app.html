@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script>
+            const onSubmit = (form) => {
+                const promise = fetch("/orders/", {
+                    method: "POST",
+                    headers: {content_type: "application/json"},
+                    body: JSON.stringify({
+                        id: form.id.value,
+                        product_id: form.product_id.value,
+                        actual_price: form.actual_price.value
+                    })
+                })
+                console.log(promise)
+                promise.then( (response) => {
+                    if (response.status == 200) {
+                        window.location.href="/orders/"
+                    } else {
+                        alert("There was an error. Possible duplication of records.")
+                    }
+                })
+                return false
+            }
+        </script>
+    </head>
+    <body>
+        <div>
+            <h1>Orders Form</h1>
+            <p>Use this simple form to test post requests against the server.</p>
+            <form id="order-form" action="/orders/" onsubmit="return onSubmit(this)">
+                <label>ID</label>
+                <input id="id" type="number">
+                <label>Product ID</label>
+                <input id="product_id" type="number">
+                <label>Actual Price</label>
+                <input id="actual_price" type="number">
+                <input type="submit">
+            </form>
+        </div>
+    </body>
+</html>
