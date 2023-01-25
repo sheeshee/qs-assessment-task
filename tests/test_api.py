@@ -90,3 +90,14 @@ def test_orders_post_error(client, db_conn):
     )
     response = client.post("/orders/", data=json.dumps(payload), headers=JSON_HEADER)
     assert response.status_code == 409
+
+
+def test_orders_metrics(client, db_conn):
+    create_order_entry(db_conn)
+    response = client.get("/orders/metrics")
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert data == [
+        dict(id=1, product_id=1, discount_percentage=91),
+        dict(id=2, product_id=2, discount_percentage=75),
+    ]

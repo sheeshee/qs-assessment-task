@@ -62,4 +62,24 @@ def post():
 
 @orders_pages.route('/metrics', methods=['GET'])
 def metrics():
-    pass
+    orders = get_connection().execute(
+        "SELECT orders.id, product_id, actual_price, list_price FROM orders JOIN products ON orders.product_id = products.id"
+    ).fetchall()
+    orders_with_discount_rate = list(map(discountify, orders))
+    return jsonify(orders_with_discount_rate)
+
+
+def discountify(order_entry):
+    """
+    Takes a dictionary of order id, product id, actual price and list price
+    and returns a dictionary of id, product id and discount percentage
+    """
+    return dict(
+        id=order_entry["id"],
+        product_id=order_entry["product_id"],
+        discount_percentage=calc_discount_rate(order_entry["list_price"], order_entry["actual_price"])
+    )
+
+
+def calc_discount_rate(list_price, actual_price):
+    return (1 - actual_price / list_price) * 100
