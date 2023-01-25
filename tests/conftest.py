@@ -21,7 +21,7 @@ def init_db(sqlite_db):
 
 
 @pytest.fixture
-def db_conn():
+def empty_db():
     _, name = tempfile.mkstemp()
     app.config["DATABASE"] = name
 
@@ -32,3 +32,26 @@ def db_conn():
         yield conn
 
     os.remove(name)
+
+
+@pytest.fixture
+def populated_db(empty_db):
+    db = empty_db
+    db.execute(
+        "INSERT INTO products (name, list_price) VALUES (?, ?)", ("Catamaran", 1000)
+    )
+    db.execute(
+        "INSERT INTO products (name, list_price) VALUES (?, ?)", ("Dinghy", 200)
+    )
+    db.execute(
+        "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (1, 1, 90)
+    )
+    db.execute(
+        "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (2, 2, 50)
+    )
+    return db
+
+
+@pytest.fixture()
+def client():
+    return app.test_client()
