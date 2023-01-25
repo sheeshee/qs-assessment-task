@@ -8,6 +8,7 @@
 5. Go to `http://127.0.0.1:5000`
 6. Use the form to input details for the order (e.g ID: 1, Product ID: 1, Actual Price: 900) and click Submit. This will create some order entries. I chose this method instead of directly editing `init_db.py` as I viewed this being more backwards compatible: the aim being to keep the setup mechanism identical to what I received. There are software solutions that handle this directly (e.g. Postman), but I wanted to practice my JavaScript a bit as well!
 7. View the orders list at `http://127.0.0.1:5000/orders`
+8. (**optional**) Give Sam job offer :rocket:
 
 
 # Backend Test: Problem Statement
