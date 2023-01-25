@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, abort, request
 from db import get_connection
+import sqlite3
 
 orders_pages = Blueprint('orders', __name__, url_prefix='/orders')
 
@@ -49,10 +50,13 @@ def update(order_id):
 @orders_pages.route('/', methods=['POST'])
 def post():
     data = request.get_json()
-    get_connection().execute(
-        "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)",
-        (data["id"], data["product_id"], data["actual_price"])
-    )
+    try:
+        get_connection().execute(
+            "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)",
+            (data["id"], data["product_id"], data["actual_price"])
+        )
+    except sqlite3.IntegrityError:
+        return abort(409)
     return jsonify(success=True)
 
 

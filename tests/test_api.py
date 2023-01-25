@@ -79,3 +79,14 @@ def test_orders_post_success(client, db_conn):
     assert response.status_code == 200
     order = db_conn.execute("SELECT * FROM orders WHERE id=1").fetchone()
     assert order == payload
+
+
+def test_orders_post_error(client, db_conn):
+    create_order_entry(db_conn)
+    payload = dict(
+        id=1,
+        product_id=1,
+        actual_price=75
+    )
+    response = client.post("/orders/", data=json.dumps(payload), headers=JSON_HEADER)
+    assert response.status_code == 409
