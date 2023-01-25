@@ -1,14 +1,15 @@
 import os
-import tempfile
 import sqlite3
+import tempfile
 from pathlib import Path
-from db import get_connection
 
 import pytest
 
+from db import get_connection
 from main import app
 
 BASE_DIR = Path(__file__).parent.parent
+
 
 def init_db(sqlite_db):
     connection = sqlite3.connect(sqlite_db)
@@ -22,7 +23,7 @@ def init_db(sqlite_db):
 @pytest.fixture
 def db_conn():
     _, name = tempfile.mkstemp()
-    app.config['DATABASE'] = name
+    app.config["DATABASE"] = name
 
     init_db(name)
 

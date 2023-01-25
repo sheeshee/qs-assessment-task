@@ -1,9 +1,10 @@
-import pytest
 import json
+
+import pytest
+
 from main import app
 
-
-JSON_HEADER = {'content-type': 'application/json'}
+JSON_HEADER = {"content-type": "application/json"}
 
 
 @pytest.fixture()
@@ -12,10 +13,18 @@ def client():
 
 
 def create_order_entry(db_conn):
-    db_conn.execute("INSERT INTO products (name, list_price) VALUES (?, ?)", ('Catamaran', 1000))
-    db_conn.execute("INSERT INTO products (name, list_price) VALUES (?, ?)", ('Dinghy', 200))
-    db_conn.execute("INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (1, 1, 90))
-    db_conn.execute("INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (2, 2, 50))
+    db_conn.execute(
+        "INSERT INTO products (name, list_price) VALUES (?, ?)", ("Catamaran", 1000)
+    )
+    db_conn.execute(
+        "INSERT INTO products (name, list_price) VALUES (?, ?)", ("Dinghy", 200)
+    )
+    db_conn.execute(
+        "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (1, 1, 90)
+    )
+    db_conn.execute(
+        "INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (2, 2, 50)
+    )
 
 
 def test_orders_list(client, db_conn):
@@ -59,9 +68,7 @@ def test_orders_update(client, db_conn):
     create_order_entry(db_conn)
 
     response = client.put(
-        "/orders/1",
-        data=json.dumps({"actual_price": 5}),
-        headers=JSON_HEADER
+        "/orders/1", data=json.dumps({"actual_price": 5}), headers=JSON_HEADER
     )
     assert response.status_code == 200
     order = db_conn.execute("SELECT * FROM orders WHERE id=1").fetchone()
@@ -69,12 +76,10 @@ def test_orders_update(client, db_conn):
 
 
 def test_orders_post_success(client, db_conn):
-    db_conn.execute("INSERT INTO products (name, list_price) VALUES (?, ?)", ('Catamaran', 1000))
-    payload = dict(
-        id=1,
-        product_id=1,
-        actual_price=75
+    db_conn.execute(
+        "INSERT INTO products (name, list_price) VALUES (?, ?)", ("Catamaran", 1000)
     )
+    payload = dict(id=1, product_id=1, actual_price=75)
     response = client.post("/orders/", data=json.dumps(payload), headers=JSON_HEADER)
     assert response.status_code == 200
     order = db_conn.execute("SELECT * FROM orders WHERE id=1").fetchone()
@@ -83,11 +88,7 @@ def test_orders_post_success(client, db_conn):
 
 def test_orders_post_error(client, db_conn):
     create_order_entry(db_conn)
-    payload = dict(
-        id=1,
-        product_id=1,
-        actual_price=75
-    )
+    payload = dict(id=1, product_id=1, actual_price=75)
     response = client.post("/orders/", data=json.dumps(payload), headers=JSON_HEADER)
     assert response.status_code == 409
 

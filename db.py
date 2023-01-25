@@ -1,5 +1,6 @@
-from flask import g
 import sqlite3
+
+from flask import g
 
 
 def dict_factory(cursor, row):
@@ -14,8 +15,9 @@ def dict_factory(cursor, row):
 
 
 def get_connection():
-    if not hasattr(g, 'sqlite_db'):
+    if not hasattr(g, "sqlite_db"):
         from main import app
+
         conn = sqlite3.connect(app.config["DATABASE"])
         conn.row_factory = dict_factory
         g.sqlite_db = conn

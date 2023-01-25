@@ -3,8 +3,8 @@ This script creates the database (Products and Orders table) which requires for 
 and populates the Products table with the default data.
 """
 
-import sqlite3
 import os
+import sqlite3
 
 current_folder = os.path.dirname(os.path.realpath(__file__))
 db_path = os.path.dirname(current_folder)
