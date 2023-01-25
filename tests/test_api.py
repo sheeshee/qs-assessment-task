@@ -13,7 +13,9 @@ def client():
 
 def create_order_entry(db_conn):
     db_conn.execute("INSERT INTO products (name, list_price) VALUES (?, ?)", ('Catamaran', 1000))
+    db_conn.execute("INSERT INTO products (name, list_price) VALUES (?, ?)", ('Dinghy', 200))
     db_conn.execute("INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (1, 1, 90))
+    db_conn.execute("INSERT INTO orders (id, product_id, actual_price) VALUES (?, ?, ?)", (2, 2, 50))
 
 
 def test_orders_list(client, db_conn):
@@ -22,7 +24,15 @@ def test_orders_list(client, db_conn):
     assert response.status_code == 200
     data = json.loads(response.data)
     assert isinstance(data, list)
-    assert len(data) == 1
+    assert len(data) == 2
+
+
+def test_orders_filter(client, db_conn):
+    create_order_entry(db_conn)
+    response = client.get("/orders/?product_id=1")
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert data == [dict(id=1, product_id=1, actual_price=90)]
 
 
 def test_orders_get_404(client, db_conn):

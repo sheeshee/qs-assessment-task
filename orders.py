@@ -6,8 +6,14 @@ orders_pages = Blueprint('orders', __name__, url_prefix='/orders')
 
 @orders_pages.route('/', methods=['GET'])
 def list_orders():
+    product_id = request.args.get("product_id")
+    if product_id is not None:
+        where_clause = f"WHERE product_id={product_id}"
+    else:
+        where_clause = ""
+
     conn = get_connection()
-    orders_list = conn.execute("SELECT * FROM orders").fetchall()
+    orders_list = conn.execute("SELECT * FROM orders " + where_clause).fetchall()
     return jsonify(orders_list)
 
 
